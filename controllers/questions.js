@@ -1,5 +1,7 @@
 import questions from "../models/Questions.js";
 import mongoose from "mongoose";
+import User from "../models/Auth.js";
+const pts = 2;
 
 export const askQuestion = async (req, res) => {
   const postQuestionData = req.body;
@@ -55,9 +57,11 @@ export const voteQuestion = async (req, res) => {
       (id) => id === String(userId)
     ); // finding the index of the userId in the array
 
+    const user = await User.findById(question.userId);
     if (value === "upVote") {
       if (downIndex !== -1) {
         // userID present in downIndex
+        // user.score += 2 * pts;
         question.downVote = question.downVote.filter(
           (id) => id !== String(userId)
         );
@@ -72,6 +76,7 @@ export const voteQuestion = async (req, res) => {
     } else {
       if (upIndex !== -1) {
         // userID present in upIndex
+        // user.score -= 2 * pts;
         question.upVote = question.upVote.filter((id) => id !== String(userId));
       }
       if (downIndex === -1) {
@@ -84,10 +89,14 @@ export const voteQuestion = async (req, res) => {
         );
       }
     }
+    let score = (question.upVote.length - question.downVote.length) * pts;
+    user.score1 = Math.max(score, 0);
+    user.score = user.score1 + user.score2;
+    await user.save();
     // updating the question in the database
     await questions.findByIdAndUpdate(_id, question);
     res.status(200).json({ message: "voted successfully" });
   } catch (err) {
-    res.status(404).josn({ message: "id not found" });
+    res.status(404).json({ message: "id not found" });
   }
 };

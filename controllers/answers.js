@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import questions from "../models/Questions.js";
+import User from "../models/Auth.js";
 
 export const postAnswer = async (req, res) => {
   const { id: _id } = req.params;
@@ -14,6 +15,26 @@ export const postAnswer = async (req, res) => {
     const updatedQuestion = await questions.findByIdAndUpdate(_id, {
       $addToSet: { answer: [{ answerBody, userAnswered, userId }] }, //append
     });
+    const user = await User.findById(userId);
+    // console.log("reached", user);
+    user.answersGiven += 1;
+    user.score2 += 1;
+    await user.save();
+    if (user.answersGiven == 5) {
+      user.badge = "Pro";
+      user.score2 += 20; //bonus
+    } else if (user.answersGiven == 20) {
+      user.badge = "Expert";
+      user.score2 += 50;
+    } else if (user.answersGiven == 50) {
+      user.badge = "Master";
+      user.score2 += 70;
+    } else if (user.answersGiven == 100) {
+      user.badge = "God";
+      user.score2 += 100;
+    }
+    user.score = user.score1 + user.score2;
+    await user.save();
     res.status(200).json(updatedQuestion);
   } catch (err) {
     res.status(400).json(err);

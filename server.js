@@ -5,6 +5,8 @@ import dbConn from "./config/dbConn.js";
 import userRoutes from "./routes/users.js";
 import questionsRoutes from "./routes/questions.js";
 import answerRoutes from "./routes/answers.js";
+import stripeRoute from "./routes/stripe.js";
+import dialogflowRoute from "./routes/dialogflow.js";
 
 const PORT = process.env.PORT || 5000;
 
@@ -19,6 +21,8 @@ app.use(cors());
 app.use("/user", userRoutes);
 app.use("/questions", questionsRoutes);
 app.use("/answers", answerRoutes);
+app.use("/api/dialogflow", dialogflowRoute);
+app.use("/api/create-checkout-session", stripeRoute);
 
 app.get("/", (req, res) => {
   res.send("This is stack overflow rest api");
