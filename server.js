@@ -7,6 +7,7 @@ import questionsRoutes from "./routes/questions.js";
 import answerRoutes from "./routes/answers.js";
 import stripeRoute from "./routes/stripe.js";
 import dialogflowRoute from "./routes/dialogflow.js";
+import corsOptions from "./config/corsOptions.js";
 
 const PORT = process.env.PORT || 5000;
 
@@ -15,7 +16,7 @@ dbConn();
 
 app.use(express.json({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors(corsOptions));
 
 // routes
 app.use("/user", userRoutes);
