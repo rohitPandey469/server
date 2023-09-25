@@ -1,4 +1,4 @@
-const FRONTEND_URL = "http://localhost:5173";
+const FRONTEND_URL = "https://splendorous-praline-736f78.netlify.app";
 import "dotenv/config"
 import Stripe from "stripe";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
